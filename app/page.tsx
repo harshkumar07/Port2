@@ -1,57 +1,122 @@
 'use client';
+
 import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
-import { ArrowDownRight, ArrowUpRight, Mail, MapPin, Code2, Database, Cloud, Sparkles, Download, FileText, ShieldCheck, Workflow, BrainCircuit } from 'lucide-react';
+import { ArrowDownRight, ArrowUpRight, Download, FileText, Github, Mail, MapPin, Sparkles, Terminal, Gamepad2, ExternalLink } from 'lucide-react';
+import type { IconType } from 'react-icons';
+import { SiCsharp, SiDotnet, SiReact, SiPython, SiJavascript, SiTypescript, SiMicrosoftazure, SiPostgresql, SiMysql, SiNodedotjs, SiMongodb, SiGit, SiGithub, SiOkta, SiDocker, SiNextdotjs, SiTailwindcss } from 'react-icons/si';
 
 const HeroScene = dynamic(() => import('@/components/hero-scene'), { ssr: false });
 
-type SkillGroup = readonly [string, readonly string[]];
-const skills: readonly SkillGroup[] = [
-  ['LANGUAGES', ['C#', 'Java', 'Python', 'JavaScript', 'TypeScript']],
-  ['BACKEND', ['.NET / ASP.NET Core', 'Web API', 'Azure Functions', 'EF Core', 'LINQ', 'Dapper', 'REST / OData']],
-  ['FRONTEND', ['React.js', 'MobX', 'Context API', 'Hooks', 'Microfrontends']],
-  ['CLOUD & DATA', ['Azure', 'Blob Storage', 'Key Vault', 'App Configuration', 'PostgreSQL', 'MySQL']],
-  ['ENGINEERING', ['OAuth 2.0 / OIDC', 'Okta', 'RBAC', 'SFTP', 'OpenTelemetry', 'Serilog', 'Pandas / ETL']],
+type Tech = { name: string; Icon: IconType };
+
+type Project = {
+  number: string;
+  title: string;
+  kind: string;
+  description: string;
+  tags: Tech[];
+  href: string;
+  featured?: boolean;
+};
+
+const coreStack: Tech[] = [
+  { name: 'C#', Icon: SiCsharp }, { name: '.NET', Icon: SiDotnet }, { name: 'React', Icon: SiReact },
+  { name: 'Python', Icon: SiPython }, { name: 'Azure', Icon: SiMicrosoftazure }, { name: 'PostgreSQL', Icon: SiPostgresql },
+  { name: 'MySQL', Icon: SiMysql }, { name: 'TypeScript', Icon: SiTypescript }, { name: 'JavaScript', Icon: SiJavascript },
+  { name: 'Node.js', Icon: SiNodedotjs }, { name: 'MongoDB', Icon: SiMongodb }, { name: 'Git', Icon: SiGit },
+  { name: 'Okta', Icon: SiOkta }, { name: 'Docker', Icon: SiDocker }, { name: 'Next.js', Icon: SiNextdotjs }, { name: 'Tailwind', Icon: SiTailwindcss },
 ];
 
-const projects = [
-  { n: '01', title: 'Healthcare Platform', desc: 'Production healthcare/dental software used by doctors and staff. Built scheduling, appointments, auditability, outside-doctor workflows and multi-tenant configuration across backend and frontend.', tags: ['C#', '.NET', 'React', 'EF Core', 'MySQL'], accent: '01' },
-  { n: '02', title: 'Python ETL Pipeline', desc: 'Automated SFTP → Azure Blob → Python ETL flow. CSV data is downloaded, validated and transformed with Pandas before being loaded into PostgreSQL for downstream use.', tags: ['Python', 'Pandas', 'Azure Functions', 'Blob', 'PostgreSQL'], accent: '02' },
-  { n: '03', title: 'QRShare', desc: 'Privacy-first peer-to-peer file sharing using QR bootstrapping, WebRTC and lightweight signaling — designed without permanent file storage.', tags: ['React', 'Node.js', 'WebRTC', 'TypeScript'], accent: '03' },
-  { n: '04', title: 'PayMe App', desc: 'MERN-based payment application with JWT authentication, transaction management, responsive UI and real-time updates.', tags: ['MongoDB', 'Express', 'React', 'Node.js', 'JWT'], accent: '04' },
+const projects: Project[] = [
+  { number: '01', title: 'Healthcare Platform', kind: 'PRODUCTION · HEALTHCARE', description: 'Production healthcare/dental software used by doctors and staff. Worked across C#/.NET, React and MySQL on appointments, Month View scheduling, auditability, outside-doctor workflows and multi-tenant configuration.', tags: [{ name: 'C#', Icon: SiCsharp }, { name: '.NET', Icon: SiDotnet }, { name: 'React', Icon: SiReact }, { name: 'MySQL', Icon: SiMysql }], href: '#experience', featured: true },
+  { number: '02', title: 'Python ETL Pipeline', kind: 'DATA · AUTOMATION', description: 'SFTP → Azure Blob → Python Functions → Pandas → PostgreSQL. Built scheduled and event-driven processing around CSV ingestion, validation, transformation and business rules.', tags: [{ name: 'Python', Icon: SiPython }, { name: 'Azure', Icon: SiMicrosoftazure }, { name: 'PostgreSQL', Icon: SiPostgresql }], href: '#work' },
+  { number: '03', title: 'QRShare', kind: 'OPEN SOURCE · WEBRTC', description: 'Privacy-first peer-to-peer file sharing using QR bootstrapping, WebRTC and lightweight signaling. Designed around direct transfer rather than permanent file storage.', tags: [{ name: 'React', Icon: SiReact }, { name: 'TypeScript', Icon: SiTypescript }, { name: 'Node.js', Icon: SiNodedotjs }], href: 'https://github.com/harshkumar07/qrshare' },
+  { number: '04', title: 'PayMe App', kind: 'PROJECT · MERN', description: 'Full-stack payment application with JWT authentication, transaction management, responsive UI and real-time updates.', tags: [{ name: 'MongoDB', Icon: SiMongodb }, { name: 'React', Icon: SiReact }, { name: 'Node.js', Icon: SiNodedotjs }], href: 'https://github.com/harshkumar07/PayMe' },
 ];
 
-const experience = [
-  ['AUG 2024 — PRESENT', 'Software Engineer · HealthAsyst', 'Building production healthcare software with C#/.NET, React, Azure and Python.'],
-  ['PRODUCTION IMPACT', '10,000+ appointments / month', 'Worked on Month View scheduling, doctor/chair/location filtering, working hours, holidays and dynamic availability.'],
-  ['CLOUD & DATA', 'Azure + PostgreSQL + Python', 'Worked with Azure Functions, Blob Storage, Key Vault, App Configuration, SFTP ingestion and Entra Managed Identity.'],
-];
+const fade = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.16 }, transition: { duration: 0.65 } };
 
-function Section({ children, id }: { children: React.ReactNode; id: string }) {
-  return <section id={id} className="mx-auto w-full max-w-6xl px-5 py-24 md:px-8">{children}</section>;
+function Section({ id, children, className = '' }: { id: string; children: React.ReactNode; className?: string }) {
+  return <section id={id} className={`mx-auto w-full max-w-7xl px-5 py-24 md:px-8 ${className}`}>{children}</section>;
 }
 
-const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.18 }, transition: { duration: 0.65 } };
+function TechRow({ items }: { items: Tech[] }) {
+  return <div className="flex flex-wrap gap-2">{items.map(({ name, Icon }) => <span key={name} title={name} className="tech-chip"><Icon aria-hidden="true"/><span>{name}</span></span>)}</div>;
+}
 
 export default function Home() {
-  return <main className="noise grid-bg min-h-screen bg-[#050507] text-white">
-    <header className="fixed top-0 z-50 w-full px-4 pt-4"><nav className="glass nav-glow mx-auto flex max-w-6xl items-center justify-between rounded-full px-5 py-3"><a href="#top" className="text-sm font-bold tracking-[.22em]">HK<span className="text-cyan-300/70">/</span>24</a><div className="hidden gap-7 text-xs text-white/55 md:flex"><a href="#work" className="nav-link">WORK</a><a href="#experience" className="nav-link">EXPERIENCE</a><a href="#stack" className="nav-link">STACK</a><a href="#about" className="nav-link">ABOUT</a><a href="#contact" className="nav-link">CONTACT</a></div><a href="mailto:Harshku068@gmail.com" className="magnetic rounded-full bg-white px-4 py-2 text-xs font-semibold text-black">LET'S TALK</a></nav></header>
+  return <main className="site-shell min-h-screen text-white">
+    <div className="ambient ambient-cyan"/><div className="ambient ambient-violet"/><div className="scanline"/>
 
-    <section id="top" className="relative flex min-h-[94vh] items-center overflow-hidden"><div className="hero-aura absolute left-[8%] top-[18%] h-72 w-72 rounded-full bg-cyan-400/20"/><div className="hero-aura hero-aura-two absolute right-[8%] bottom-[8%] h-80 w-80 rounded-full bg-violet-500/20"/><HeroScene/><div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#050507] to-transparent"/><div className="mx-auto w-full max-w-6xl px-5 pt-20 md:px-8"><div className="max-w-5xl"><motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 flex items-center gap-3 text-xs tracking-[.28em] text-cyan-100/55"><span className="h-px w-10 bg-cyan-300/50"/> SOFTWARE ENGINEER · BENGALURU</motion.p><motion.h1 initial={{ opacity: 0, y: 25 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .1, duration: .8 }} className="text-[clamp(3.5rem,10vw,9rem)] font-semibold leading-[.84] tracking-[-.07em]">BUILDING<br/><span className="gradient-text">DIGITAL SYSTEMS.</span></motion.h1><motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .25 }} className="mt-9 max-w-2xl text-base leading-7 text-white/55 md:text-lg">I’m Harsh — a full stack developer focused on <span className="text-cyan-100">C# / .NET, React, Python and Azure</span>. I build reliable production systems, data workflows and polished product experiences.</motion.p><motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .35 }} className="mt-9 flex flex-wrap gap-3"><a href="#work" className="magnetic group rounded-full bg-white px-6 py-3 text-sm font-semibold text-black">Explore my work <ArrowDownRight className="ml-2 inline size-4 transition-transform group-hover:translate-y-1 group-hover:rotate-12"/></a><a href="/resume.pdf" target="_blank" rel="noreferrer" className="glass magnetic rounded-full px-5 py-3 text-sm text-white/85"><FileText className="mr-2 inline size-4"/> View Resume</a><a href="/resume.pdf" download="Harsh-Kumar-Resume.pdf" className="glass magnetic rounded-full px-5 py-3 text-sm text-white/85"><Download className="mr-2 inline size-4"/> Download Resume</a></motion.div></div></div></section>
+    <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+      <nav className="nav-glass mx-auto flex max-w-7xl items-center justify-between rounded-full px-4 py-3 md:px-5">
+        <a href="#top" className="brand-mark"><span>HK</span><i>/</i><b>24</b></a>
+        <div className="hidden items-center gap-7 text-[11px] tracking-[.16em] text-white/50 lg:flex">
+          <a href="#experience" className="nav-link">EXPERIENCE</a><a href="#work" className="nav-link">WORK</a><a href="#stack" className="nav-link">STACK</a><a href="#about" className="nav-link">ABOUT</a>
+        </div>
+        <div className="flex items-center gap-2">
+          <a href="/projects" className="nav-icon" title="Projects"><ExternalLink size={15}/><span className="hidden sm:inline">PROJECTS</span></a>
+          <a href="/lab" className="nav-icon" title="Lab"><Terminal size={15}/><span className="hidden sm:inline">LAB</span></a>
+          <a href="/games" className="nav-icon" title="Games"><Gamepad2 size={15}/><span className="hidden sm:inline">GAMES</span></a>
+        </div>
+      </nav>
+    </header>
 
-    <div className="border-y border-white/[.07] bg-white/[.015]"><div className="mx-auto grid max-w-6xl grid-cols-2 px-5 md:grid-cols-4 md:px-8">{[['~2', 'YEARS BUILDING'], ['C#', 'CORE LANGUAGE'], ['AZURE', 'CLOUD'], ['10K+', 'APPOINTMENTS / MONTH']].map(([a, b]) => <div key={b} className="stat-cell border-r border-white/[.07] px-5 py-7 last:border-0"><div className="text-2xl font-semibold tracking-tight">{a}</div><div className="mt-1 text-[10px] tracking-[.2em] text-white/35">{b}</div></div>)}</div></div>
+    <section id="top" className="relative flex min-h-screen items-center overflow-hidden pt-20">
+      <HeroScene/><div className="hero-grid"/><div className="hero-fade"/>
+      <div className="mx-auto w-full max-w-7xl px-5 md:px-8">
+        <div className="max-w-6xl">
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="eyebrow"><span className="live-dot"/> SOFTWARE ENGINEER · FULL STACK · BENGALURU</motion.div>
+          <motion.h1 initial={{ opacity: 0, y: 35 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .08, duration: .8 }} className="hero-title">ENGINEERING<br/><span>REAL SYSTEMS.</span></motion.h1>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .28 }} className="hero-copy">I’m <strong>Harsh Kumar</strong> — a Software Engineer building production applications with <strong>C# / .NET, React, Python and Azure</strong>. Backend systems, data pipelines, cloud services and product interfaces.</motion.p>
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .4 }} className="mt-8 flex flex-wrap gap-3">
+            <a href="#work" className="btn-primary">Explore work <ArrowDownRight size={16}/></a>
+            <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-secondary"><FileText size={16}/> View Resume</a>
+            <a href="/resume.pdf" download="Harsh-Kumar-Resume.pdf" className="btn-secondary"><Download size={16}/> Download</a>
+          </motion.div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: .55 }} className="mt-10"><TechRow items={coreStack.slice(0, 9)}/></motion.div>
+        </div>
+      </div>
+      <div className="hero-corner">SCROLL TO EXPLORE <ArrowDownRight size={14}/></div>
+    </section>
 
-    <Section id="experience"><motion.div {...fadeUp} className="mb-12"><p className="mb-3 text-xs tracking-[.25em] text-cyan-200/45">EXPERIENCE</p><h2 className="text-4xl font-semibold tracking-tight md:text-6xl">Where I build.</h2></motion.div><div className="relative ml-2 border-l border-cyan-300/15 pl-7 md:ml-5 md:pl-10">{experience.map(([date, title, desc], i) => <motion.div key={title} {...fadeUp} transition={{ delay: i * .08, duration: .65 }} className="timeline-item relative mb-5 last:mb-0"><span className="timeline-dot absolute -left-[35px] top-6 size-2 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(103,232,249,.9)] md:-left-[45px]"/><div className="glass hover-lift rounded-3xl p-6 md:p-8"><div className="text-[10px] tracking-[.22em] text-cyan-200/45">{date}</div><h3 className="mt-2 text-xl font-medium md:text-2xl">{title}</h3><p className="mt-3 max-w-3xl text-sm leading-6 text-white/45">{desc}</p></div></motion.div>)}</div></Section>
+    <div className="signal-strip"><div><b>~2</b><span>YEARS</span></div><div><b>10K+</b><span>APPOINTMENTS / MONTH</span></div><div><b>C#</b><span>CORE</span></div><div><b>AZURE</b><span>CLOUD</span></div></div>
 
-    <Section id="work"><motion.div {...fadeUp} className="mb-12 flex items-end justify-between"><div><p className="mb-3 text-xs tracking-[.25em] text-cyan-200/45">SELECTED WORK</p><h2 className="text-4xl font-semibold tracking-tight md:text-6xl">Things I build.</h2></div><ArrowDownRight className="hidden size-9 text-cyan-200/25 md:block"/></motion.div><div className="grid gap-4 md:grid-cols-2">{projects.map((p, i) => <motion.article key={p.n} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ delay: i * .07 }} whileHover={{ y: -8 }} className="project-card glass group relative overflow-hidden rounded-3xl p-6 md:p-8"><div className="project-glow"/><div className="absolute right-7 top-4 text-7xl font-bold tracking-[-.08em] text-white/[.035]">{p.accent}</div><div className="relative"><div className="mb-8 flex items-center justify-between"><span className="rounded-full border border-cyan-200/10 px-3 py-1 text-[10px] tracking-[.2em] text-cyan-100/45">/{p.n}</span><ArrowUpRight className="size-5 text-white/25 transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-cyan-200"/></div><h3 className="text-2xl font-medium md:text-3xl">{p.title}</h3><p className="mt-3 max-w-xl text-sm leading-6 text-white/45">{p.desc}</p><div className="mt-6 flex flex-wrap gap-2">{p.tags.map((t) => <span key={t} className="rounded-full border border-white/10 bg-white/[.025] px-3 py-1 text-[10px] text-white/55 transition-colors group-hover:border-cyan-200/15">{t}</span>)}</div></div></motion.article>)}</div></Section>
+    <Section id="experience">
+      <motion.div {...fade} className="section-heading"><div><p>01 / EXPERIENCE</p><h2>Production, not demos.</h2></div><span>HEALTHCARE · CLOUD · DATA</span></motion.div>
+      <motion.div {...fade} className="experience-card">
+        <div className="experience-top"><div><span className="status">● CURRENT</span><h3>Software Engineer</h3><p>HealthAsyst · Bengaluru</p></div><div className="experience-date">AUG 2024 — PRESENT</div></div>
+        <p className="experience-lead">Building and enhancing a production healthcare/dental application used by doctors and staff, working across backend services, frontend workflows, data processing and Azure.</p>
+        <div className="experience-grid">
+          <div><span>01</span><h4>Product engineering</h4><p>C#/.NET, React, EF Core, LINQ, MySQL, REST/OData, Microservices and Micro Frontends.</p></div>
+          <div><span>02</span><h4>Scheduling at scale</h4><p>Month View with doctor/chair/location filters, working hours, holidays and dynamic availability for 10K+ monthly appointments.</p></div>
+          <div><span>03</span><h4>Cloud & data</h4><p>Azure Functions, Blob Storage, SFTP ingestion, Python/Pandas ETL, PostgreSQL and Entra Managed Identity.</p></div>
+          <div><span>04</span><h4>Security & reliability</h4><p>Okta OIDC/OAuth 2.0, RBAC, auditability, query optimization, caching, pagination and observability.</p></div>
+        </div>
+      </motion.div>
+    </Section>
 
-    <Section id="stack"><motion.div {...fadeUp} className="mb-12"><p className="mb-3 text-xs tracking-[.25em] text-cyan-200/45">THE TOOLKIT</p><h2 className="text-4xl font-semibold tracking-tight md:text-6xl">My stack, in layers.</h2></motion.div><div className="grid gap-3 md:grid-cols-2">{skills.map(([name, items], i) => <motion.div key={name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * .05 }} className="glass hover-lift rounded-3xl p-6"><div className="mb-5 flex items-center justify-between"><span className="text-xs tracking-[.2em] text-cyan-200/35">0{i + 1}</span><span className="text-xs text-white/55">{name}</span></div><div className="flex flex-wrap gap-2">{items.map((x) => <span key={x} className="skill-pill rounded-lg bg-white/[.045] px-3 py-2 text-xs text-white/75">{x}</span>)}</div></motion.div>)}</div></Section>
+    <Section id="work" className="pt-10">
+      <motion.div {...fade} className="section-heading"><div><p>02 / SELECTED WORK</p><h2>Things I actually build.</h2></div><a href="/projects" className="section-link">VIEW ALL <ArrowUpRight size={15}/></a></motion.div>
+      <div className="project-grid">{projects.map((project, i) => <motion.article key={project.number} initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .12 }} transition={{ delay: i * .06 }} className={`project-card ${project.featured ? 'project-featured' : ''}`}>
+        <div className="project-no">{project.number}</div><div className="project-kind">{project.kind}</div><h3>{project.title}</h3><p>{project.description}</p><TechRow items={project.tags}/><a href={project.href} target={project.href.startsWith('http') ? '_blank' : undefined} rel={project.href.startsWith('http') ? 'noreferrer' : undefined} className="project-action">OPEN <ArrowUpRight size={15}/></a>
+      </motion.article>)}</div>
+    </Section>
 
-    <Section id="about"><div className="grid gap-12 md:grid-cols-[1fr_1.4fr] md:items-center"><motion.div {...fadeUp}><p className="mb-3 text-xs tracking-[.25em] text-cyan-200/45">A LITTLE ABOUT ME</p><h2 className="text-4xl font-semibold tracking-tight md:text-6xl">Engineering with<br/><span className="text-white/35">product sense.</span></h2></motion.div><motion.div {...fadeUp} className="space-y-5 text-base leading-8 text-white/55"><p>I work on production software where backend architecture, APIs, data and polished interfaces have to fit together. My day-to-day toolkit is C#/.NET and React, with Python for data workflows and Azure for cloud systems.</p><p>I care about performance, clean boundaries and systems that are easy to reason about — from query optimization and caching to authentication, observability and multi-tenant configuration.</p><div className="grid grid-cols-2 gap-3 pt-3">{[[Code2, 'Application engineering'], [Database, 'Data & performance'], [Cloud, 'Cloud systems'], [Sparkles, 'AI & automation']].map(([Icon, t]) => { const I = Icon as typeof Code2; return <div key={t as string} className="glass hover-lift rounded-2xl p-4"><I className="mb-3 size-4 text-cyan-200/65"/><span className="text-xs text-white/55">{t as string}</span></div>; })}</div></motion.div></div></Section>
+    <Section id="stack">
+      <motion.div {...fade} className="section-heading"><div><p>03 / TECHNOLOGY</p><h2>My tools have logos now.</h2></div><span>NO RANDOM BUZZWORDS</span></motion.div>
+      <div className="logo-wall">{coreStack.map(({ name, Icon }, i) => <motion.div key={name} initial={{ opacity: 0, scale: .92 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * .025 }} className="logo-tile"><Icon size={28}/><span>{name}</span></motion.div>)}</div>
+    </Section>
 
-    <Section id="capabilities"><motion.div {...fadeUp} className="mb-10"><p className="mb-3 text-xs tracking-[.25em] text-cyan-200/45">WHAT I BRING</p><h2 className="text-4xl font-semibold tracking-tight md:text-6xl">Beyond the stack.</h2></motion.div><div className="grid gap-3 md:grid-cols-3">{[[ShieldCheck, 'Secure by design', 'Okta OIDC/OAuth 2.0, token-based authorization and RBAC across protected APIs and resources.'], [Workflow, 'Data in motion', 'SFTP ingestion, Blob Storage, Python Functions, Pandas transformations and PostgreSQL loading.'], [BrainCircuit, 'AI & automation', 'Azure AI Foundry and LLM-powered analysis for structured summaries and recommendations.']].map(([Icon, title, desc], i) => { const I = Icon as typeof ShieldCheck; return <motion.div key={title as string} {...fadeUp} transition={{ delay: i * .08, duration: .65 }} className="glass hover-lift rounded-3xl p-6 md:p-7"><I className="size-5 text-cyan-200/70"/><h3 className="mt-6 text-lg font-medium">{title as string}</h3><p className="mt-3 text-sm leading-6 text-white/45">{desc as string}</p></motion.div>; })}</div></Section>
+    <Section id="about">
+      <div className="about-grid"><motion.div {...fade}><p className="eyebrow-small">04 / ABOUT</p><h2 className="about-title">I like the part where<br/><span>everything connects.</span></h2></motion.div><motion.div {...fade} className="about-copy"><p>My strongest lane is full-stack product engineering: <strong>C#/.NET on the backend, React on the frontend, Python for data workflows and Azure for cloud services.</strong></p><p>I work on the details that make production software dependable — authentication, authorization, multi-tenant configuration, query performance, caching, audit trails, data ingestion and operational visibility.</p><div className="about-links"><a href="https://github.com/harshkumar07" target="_blank" rel="noreferrer"><SiGithub/> GitHub <ArrowUpRight size={14}/></a><a href="https://www.linkedin.com/in/harshkumargupta/" target="_blank" rel="noreferrer"><span className="linkedin-mark">in</span> LinkedIn <ArrowUpRight size={14}/></a><a href="mailto:Harshku068@gmail.com"><Mail size={15}/> Email <ArrowUpRight size={14}/></a></div></motion.div></div>
+    </Section>
 
-    <section id="contact" className="relative overflow-hidden border-t border-white/[.07]"><div className="contact-aura absolute left-1/2 top-1/2 size-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/10"/><div className="relative mx-auto max-w-6xl px-5 py-28 md:px-8"><p className="text-xs tracking-[.25em] text-cyan-200/45">HAVE A PROJECT / OPPORTUNITY?</p><h2 className="mt-5 max-w-4xl text-[clamp(3rem,8vw,7rem)] font-semibold leading-[.9] tracking-[-.06em]">LET'S MAKE<br/><span className="gradient-text">SOMETHING GREAT.</span></h2><div className="mt-10 flex flex-wrap gap-3"><a href="mailto:Harshku068@gmail.com" className="magnetic rounded-full bg-white px-6 py-3 text-sm font-semibold text-black"><Mail className="mr-2 inline size-4"/> Email me</a><a href="/resume.pdf" target="_blank" rel="noreferrer" className="magnetic glass rounded-full px-6 py-3 text-sm"><FileText className="mr-2 inline size-4"/> View Resume</a><a href="/resume.pdf" download="Harsh-Kumar-Resume.pdf" className="magnetic glass rounded-full px-6 py-3 text-sm"><Download className="mr-2 inline size-4"/> Download Resume</a><a href="https://www.linkedin.com/in/harshkumargupta/" target="_blank" rel="noreferrer" className="magnetic glass rounded-full px-6 py-3 text-sm">LinkedIn <ArrowUpRight className="ml-2 inline size-4"/></a><a href="https://github.com/harshkumar07" target="_blank" rel="noreferrer" className="magnetic glass rounded-full px-6 py-3 text-sm">GitHub <ArrowUpRight className="ml-2 inline size-4"/></a></div><div className="mt-20 flex items-center gap-2 text-xs text-white/25"><MapPin className="size-3"/> Bengaluru, India <span className="mx-2">·</span> Available for great problems</div></div></section>
-    <footer className="border-t border-white/[.07] px-5 py-7 text-center text-[10px] tracking-[.2em] text-white/25">HARSH KUMAR · FULL STACK DEVELOPER · 2026</footer>
+    <section className="play-section"><div className="play-orbit"/><div className="mx-auto max-w-7xl px-5 md:px-8"><motion.div {...fade} className="play-card"><div><span className="eyebrow-small"><Sparkles size={13}/> SIDE QUESTS</span><h2>There is more than work.</h2><p>Interactive experiments, tiny games, terminal toys and things I build just because I can.</p></div><div className="play-actions"><a href="/lab" className="btn-secondary"><Terminal size={16}/> Open Lab</a><a href="/games" className="btn-primary"><Gamepad2 size={16}/> Play Games</a></div></motion.div></div></section>
+
+    <section id="contact" className="contact-section"><div className="contact-glow"/><div className="relative mx-auto max-w-7xl px-5 py-32 md:px-8"><p className="eyebrow-small">05 / CONTACT</p><h2>LET'S BUILD<br/><span>THE NEXT THING.</span></h2><div className="mt-9 flex flex-wrap gap-3"><a href="mailto:Harshku068@gmail.com" className="btn-primary"><Mail size={16}/> Harshku068@gmail.com</a><a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-secondary"><FileText size={16}/> Resume</a><a href="https://github.com/harshkumar07" target="_blank" rel="noreferrer" className="btn-secondary"><Github size={16}/> GitHub</a></div><div className="mt-16 flex items-center gap-2 text-xs text-white/30"><MapPin size={13}/> Bengaluru, India <span>·</span> Software Engineer</div></div></section>
+
+    <footer className="footer"><span>HARSH KUMAR</span><span>FULL STACK · C# · .NET · REACT · AZURE</span><span>© 2026</span></footer>
   </main>;
 }
